@@ -1,0 +1,115 @@
+PYTHONLA BİG BANG TEORİSİ SİMÜLASYONU
+# Big Bang Theory Simulation
+# Author: Rıdvan Kaya
+# Date: 01/12/2023
+# Import libraries
+import numpy as np
+import matplotlib.pyplot as plt
+# Define constants
+G = 6.674e-11 # Gravitational constant
+c = 2.998e8 # Speed of light
+h = 6.626e-34 # Planck constant
+k = 1.381e-23 # Boltzmann constant
+T0 = 2.725 # Current temperature of the cosmic microwave background radiation
+H0 = 67.4 # Current Hubble constant
+rho_c = 3 * H0**2 / (8 * np.pi * G) # Critical density of the universe
+Omega_m = 0.315 # Matter density parameter
+Omega_r = 9.236e-5 # Radiation density parameter
+Omega_L = 0.685 # Dark energy density parameter
+Omega_k = 1 - Omega_m - Omega_r - Omega_L # Curvature density parameter
+# Define initial conditions
+a0 = 1e-30 # Initial scale factor
+t0 = 0 # Initial time
+dt = 1e6 # Time step
+t_max = 13.8e9 # Maximum time
+N = int((t_max - t0) / dt) # Number of iterations
+# Define arrays to store variables
+a = np.zeros(N) # Scale factor
+t = np.zeros(N) # Time
+T = np.zeros(N) # Temperature
+H = np.zeros(N) # Hubble parameter
+rho_m = np.zeros(N) # Matter density
+rho_r = np.zeros(N) # Radiation density
+rho_L = np.zeros(N) # Dark energy density
+rho_k = np.zeros(N) # Curvature density
+# Set initial values
+a[0] = a0
+t[0] = t0
+T[0] = T0 * a0**(-1)
+H[0] = H0 * np.sqrt(Omega_m * a0**(-3) + Omega_r * a0**(-4) + Omega_L + Omega_k * a0**(-2))
+rho_m[0] = Omega_m * rho_c * a0**(-3)
+rho_r[0] = Omega_r * rho_c * a0**(-4)
+rho_L[0] = Omega_L * rho_c
+rho_k[0] = Omega_k * rho_c * a0**(-2)
+# Define a function to calculate the Friedmann equation
+def friedmann(a, H):
+    return - 4 * np.pi * G * (rho_m[i] + rho_r[i] + rho_L[i]) * a / (3 * H) + H**2 * Omega_k
+# Run the simulation using Euler's method
+for i in range(1, N):
+    a[i] = a[i-1] + dt * H[i-1] * a[i-1]
+    t[i] = t[i-1] + dt
+    T[i] = T0 * a[i]**(-1)
+    H[i] = H[i-1] + dt * friedmann(a[i-1], H[i-1])
+    rho_m[i] = Omega_m * rho_c * a[i]**(-3)
+    rho_r[i] = Omega_r * rho_c * a[i]**(-4)
+    rho_L[i] = Omega_L * rho_c
+    rho_k[i] = Omega_k * rho_c * a[i]**(-2)
+# Plot the results
+plt.figure(figsize=(10, 8))
+plt.subplot(2, 2, 1)
+plt.plot(t, a)
+plt.xlabel("Time (years)")
+plt.ylabel("Scale factor")
+plt.title("Expansion of the universe")
+plt.subplot(2, 2, 2)
+plt.plot(t, T)
+plt.xlabel("Time (years)")
+plt.ylabel("Temperature (K)")
+plt.title("Cooling of the universe")
+plt.subplot(2, 2, 3)
+plt.plot(t, H)
+plt.xlabel("Time (years)")
+plt.ylabel("Hubble parameter (km/s/Mpc)")
+plt.title("Hubble's law")
+plt.subplot(2, 2, 4)
+plt.plot(t, rho_m, label="Matter")
+plt.plot(t, rho_r, label="Radiation")
+plt.plot(t, rho_L, label="Dark energy")
+plt.plot(t, rho_k, label="Curvature")
+plt.xlabel("Time (years)")
+plt.ylabel("Density (kg/m^3)")
+plt.title("Density parameters")
+plt.legend()
+plt.tight_layout()
+plt.show()
+
+Bu kod, Big Bang teorisini simüle etmek için Python programlama dilini kullanmaktadır.
+Kodun içeriğini açıklamak gerekirse:
+- İlk olarak, gerekli kütüphaneleri içe aktarıyoruz. Numpy, matematiksel işlemler için, 
+matplotlib ise grafik çizmek için kullanılıyor.
+- Sonra, bazı sabitleri tanımlıyoruz. Bunlar, evrenin dinamiklerini belirleyen fiziksel 
+büyüklüklerdir. Örneğin, G yerçekimi sabiti, c ışık hızı, h Planck sabiti, k Boltzmann sabiti, 
+T0 kozmik mikrodalga arka plan ışınımının şimdiki sıcaklığı, H0 şimdiki Hubble sabiti, rho_c evrenin
+kritik yoğunluğu, Omega_m madde yoğunluk parametresi, Omega_r ışınım yoğunluk parametresi, Omega_L karanlık 
+enerji yoğunluk parametresi, Omega_k eğrilik yoğunluk parametresidir.
+- Daha sonra, başlangıç koşullarını belirliyoruz. a0 başlangıç ölçek faktörü, t0 başlangıç zamanı, dt zaman 
+adımı, t_max maksimum zaman, N iterasyon sayısıdır. Ölçek faktörü, evrenin genişlemesini ölçen bir büyüklüktür. 
+Zaman adımı, simülasyonun ne kadar sıklıkla güncellendiğini belirler. Iterasyon sayısı, simülasyonun kaç kez 
+tekrarlandığını belirler.
+- Ardından, değişkenleri saklamak için diziler tanımlıyoruz. a ölçek faktörü, t zaman, T sıcaklık, H Hubble
+parametresi, rho_m madde yoğunluğu, rho_r ışınım yoğunluğu, rho_L karanlık enerji yoğunluğu, rho_k eğrilik 
+yoğunluğudur.
+- Başlangıç değerlerini dizilerin ilk elemanlarına atıyoruz. Bu değerler, evrenin şimdiki durumunu veya 
+Big Bang anını temsil eder.
+- Friedmann denklemini hesaplamak için bir fonksiyon tanımlıyoruz. Bu denklem, evrenin genişleme hızını
+ölçek faktörüne bağlayan bir diferansiyel denklemdir. Bu denklemde, evrenin yoğunluk parametreleri de rol oynar.
+- Simülasyonu Euler yöntemi kullanarak çalıştırıyoruz. Bu yöntem, diferansiyel denklemleri sayısal olarak çözmek 
+için basit bir yöntemdir. Her iterasyonda, ölçek faktörünü, zamanı, sıcaklığı, Hubble parametresini ve yoğunlukları 
+güncelliyoruz. Friedmann fonksiyonunu, Hubble parametresinin değişim hızını bulmak için kullanıyoruz.
+- Son olarak, sonuçları grafik olarak çiziyoruz. plt.figure ile bir grafik penceresi oluşturuyoruz. plt.subplot
+ile bu pencereyi dört bölüme ayırıyoruz. plt.plot ile değişkenleri zamanla nasıl değiştiklerini gösteren eğriler
+çiziyoruz. plt.xlabel, plt.ylabel, plt.title, plt.legend ile de grafiklere etiket, başlık ve açıklama ekliyoruz. 
+plt.tight_layout ile grafikleri düzenliyoruz. plt.show ile grafikleri gösteriyoruz.
+
+
+
